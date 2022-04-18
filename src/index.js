@@ -8,8 +8,9 @@ import App from './App';
 const container = document.getElementById('root');
 const root = ReactDOMClient.createRoot(container);
 
+const development = process.env.NODE_ENV === 'development';
 const client = new ApolloClient({
-  uri: 'http://localhost:4000',
+  uri: development ? 'http://localhost:4000' : 'https://cdcd-server.creativedistillery.com',
   cache: new InMemoryCache(),
 });
 
