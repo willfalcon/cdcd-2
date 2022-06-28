@@ -13,24 +13,28 @@ export const SITES_QUERY = gql`
       title
       url
       frontendUrl
-      latestPost
-      latestUpdate
       flagTime
-      error
-      postTypes {
-        type
-      }
+      postTypes
+      updatePostTypes
     }
   }
 `;
 const SiteList = () => {
   const { loading, error, data } = useQuery(SITES_QUERY);
-  console.log(data);
+  // console.log(data);
   if (error) {
     console.error('booboo: ', error);
   }
 
   const [addFormOpen, setAddFormOpen] = useState(false);
+  if (error) {
+    return (
+      <div>
+        <p>Error!!</p>
+        <p>{error?.message || error}</p>
+      </div>
+    );
+  }
 
   return (
     <StyledSiteList>

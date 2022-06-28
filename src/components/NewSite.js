@@ -4,16 +4,17 @@ import Form from './Form';
 import Button from './Button';
 import Error from './Error';
 import useForm from '../lib/useForm';
-import { gql, useMutation } from '@apollo/client';
+import { gql, useMutation, useQuery } from '@apollo/client';
 import { SITES_QUERY } from './SiteList';
 
 const CREATE_SITE_MUTATION = gql`
-  mutation CreateSite($title: String!, $url: String!, $frontendUrl: String) {
-    createSite(title: $title, url: $url, frontendUrl: $frontendUrl) {
+  mutation CreateSiteCDCD($title: String!, $url: String!, $frontendUrl: String) {
+    createSiteCDCD(title: $title, url: $url, frontendUrl: $frontendUrl) {
       id
       title
       url
       frontendUrl
+      postTypes
     }
   }
 `;

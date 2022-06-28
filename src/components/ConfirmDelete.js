@@ -7,7 +7,9 @@ import Error from './Error';
 
 const DELETE_SITE_MUTATION = gql`
   mutation DELETE_SITE_MUTATION($id: ID!) {
-    deleteSite(id: $id)
+    deleteSite(where: { id: $id }) {
+      id
+    }
   }
 `;
 

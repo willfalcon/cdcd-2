@@ -5,8 +5,10 @@ const Form = styled.form`
     border: 0;
     padding: 0;
   }
-  label {
+  label,
+  .label-wrapper {
     display: block;
+
     span {
       display: block;
       &.description {
@@ -16,6 +18,10 @@ const Form = styled.form`
         font-size: 1.4rem;
       }
     }
+  }
+
+  h2 {
+    text-align: center;
   }
 `;
 

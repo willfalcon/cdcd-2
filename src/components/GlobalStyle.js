@@ -25,7 +25,7 @@ const GlobalStyle = createGlobalStyle`
     font-weight: 400;
     font-style: normal;
     font-size: 1.6rem;
-    line-height: 2;
+    line-height: 1.5;
     background-color: ${({ theme }) => theme.light};
     color: ${({ theme }) => theme.dark};
     min-height: 100vh;
@@ -47,12 +47,12 @@ const GlobalStyle = createGlobalStyle`
     margin: 0;
     font-size: 2.8rem;
   }
-  h3, label, input, textarea {
+  h3 {
     font-family: ${({ theme }) => theme.font.heading};
     font-weight: 700;
     font-style: normal;
     letter-spacing: 2px;
-    line-height: 2.15;
+    line-height: 1.15;
     margin: 0 0 .5rem;
     font-size: 1.6rem;
   }
@@ -84,6 +84,10 @@ const GlobalStyle = createGlobalStyle`
   }
   .flag {
     color: ${({ theme }) => theme.red};
+  }
+
+  .columns-2 {
+    columns: 2;
   }
 `;
 

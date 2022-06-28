@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import classNames from 'classnames';
 import { format, differenceInDays } from 'date-fns';
 import { gql, useMutation } from '@apollo/client';
+import styled from 'styled-components';
+import nProgress from 'nprogress';
 
 import Button from '../Button';
 import Modal from '../Modal';
@@ -10,48 +12,106 @@ import useForm from '../../lib/useForm';
 import Error from '../Error';
 
 const UPDATE_FLAG_TIME_MUTATION = gql`
-  mutation UPDATE_FLAG_TIME_MUTATION($id: ID!, $data: SiteFields!) {
-    updateSite(id: $id, data: $data) {
+  mutation UPDATE_FLAG_TIME_MUTATION($id: ID!, $data: SiteUpdateInput!) {
+    updateSite(where: { id: $id }, data: $data) {
       id
       flagTime
+      updatePostTypes
     }
   }
 `;
 
-const LatestUpdateOptions = ({ setEditFlagTime, id, flagTime, postTypes }) => {
-  console.log(postTypes);
+const LatestUpdateOptions = ({ setEditFlagTime, id, flagTime, updatePostTypes, typeOptions }) => {
   const [updateFlagTime, { loading, error }] = useMutation(UPDATE_FLAG_TIME_MUTATION);
   const { inputs, handleChange } = useForm({ flagTime: flagTime || 30 });
+
+  const [checkedTypes, setCheckedTypes] = useState(updatePostTypes || []);
 
   return (
     <Modal handleClose={() => setEditFlagTime(false)}>
       <Form
-        onSubmit={e => {
+        onSubmit={async e => {
           e.preventDefault();
-          updateFlagTime({
+          nProgress.start();
+          await updateFlagTime({
             variables: {
               id,
-              data: inputs,
+              data: {
+                flagTime: inputs.flagTime,
+                updatePostTypes: checkedTypes,
+              },
             },
           });
+          nProgress.done();
+          setEditFlagTime(false);
         }}
       >
-        <h3>Edit Flag Time</h3>
-        <p>Set how many days before the latest update changes colors.</p>
+        <h2>Edit Latest Update Bit</h2>
         <Error error={error} />
-        <fieldset disabled={loading} aria-busy={loading}>
-          <label htmlFor="flagTime">
-            <span>Flag Time</span>
+        <FieldsetGrid disabled={loading} aria-busy={loading}>
+          <label htmlFor="flagTime" className="span-1">
+            <h3>Flag Time</h3>
+            <p>Set how many days before the latest update changes colors.</p>
             <input id="flagTime" name="flagTime" type="number" value={inputs.flagTime} onChange={handleChange} />
           </label>
-          <Button type="submit">Submit</Button>
-        </fieldset>
+          <div className="label-wrapper span-1">
+            <h3>Post Types to Check</h3>
+            <p>Set which post types you'd like to be included in the "Last Update" status.</p>
+            <div className="columns-2">
+              {typeOptions.map(type => {
+                return (
+                  <label style={{ display: 'block' }} key={type}>
+                    <input
+                      type="checkbox"
+                      name="options"
+                      value={type}
+                      checked={checkedTypes.includes(type)}
+                      onChange={e => {
+                        console.log(e.target.checked);
+                        if (!checkedTypes.includes(type)) {
+                          setCheckedTypes([...checkedTypes, type]);
+                        } else {
+                          setCheckedTypes([
+                            ...checkedTypes.slice(0, checkedTypes.indexOf(type)),
+                            ...checkedTypes.slice(checkedTypes.indexOf(type) + 1),
+                          ]);
+                        }
+                      }}
+                      style={{ marginRight: '5px' }}
+                    />
+                    {type}
+                  </label>
+                );
+              })}
+            </div>
+          </div>
+          <Button type="submit" className="span-2">
+            Submit
+          </Button>
+        </FieldsetGrid>
       </Form>
     </Modal>
   );
 };
 
-const LatestUpdate = ({ latestUpdate, flagTime, id }) => {
+const FieldsetGrid = styled.fieldset`
+  display: grid;
+  gap: 3rem;
+  grid-template-columns: 2fr 3fr;
+  grid-template-rows: repeat(2, auto);
+  margin-top: 2rem;
+  .span-1 {
+    grid-column: span 1;
+  }
+  .span-2 {
+    grid-column: span 2;
+  }
+  button {
+    justify-self: center;
+  }
+`;
+
+const LatestUpdate = ({ latestUpdate, flagTime, id, updatePostTypes, typeOptions }) => {
   const [editFlagTime, setEditFlagTime] = useState(false);
 
   const updateDifference = differenceInDays(new Date(), new Date(latestUpdate));
@@ -66,7 +126,15 @@ const LatestUpdate = ({ latestUpdate, flagTime, id }) => {
           <time className={classNames('update-date', { expired, fresh })}>{format(new Date(latestUpdate), 'L/dd/yyy')}</time>
         </button>
       </div>
-      {editFlagTime && <LatestUpdateOptions setEditFlagTime={setEditFlagTime} id={id} flagTime={flagTime} />}
+      {editFlagTime && (
+        <LatestUpdateOptions
+          setEditFlagTime={setEditFlagTime}
+          id={id}
+          flagTime={flagTime}
+          updatePostTypes={updatePostTypes}
+          typeOptions={typeOptions}
+        />
+      )}
     </>
   );
 };

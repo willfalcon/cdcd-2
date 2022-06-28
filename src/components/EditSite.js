@@ -1,5 +1,6 @@
 import React from 'react';
 import { gql, useMutation } from '@apollo/client';
+import nProgress from 'nprogress';
 
 import Modal from './Modal';
 import Form from './Form';
@@ -9,8 +10,8 @@ import Button from './Button';
 import { SITES_QUERY } from './SiteList';
 
 const UPDATE_SITE_MUTATION = gql`
-  mutation UPDATE_SITE_MUTATION($id: ID!, $data: SiteFields) {
-    updateSite(id: $id, data: $data) {
+  mutation UPDATE_SITE_MUTATION($id: ID!, $data: SiteUpdateInput!) {
+    updateSite(where: { id: $id }, data: $data) {
       id
       title
       url
@@ -36,12 +37,15 @@ const EditSite = props => {
       <Form
         onSubmit={async e => {
           e.preventDefault();
+          nProgress.start();
           await updateSite({
             variables: {
               id: props.id,
               data: inputs,
             },
           });
+          nProgress.done();
+          setExpanded(false);
         }}
       >
         <Error error={error} />

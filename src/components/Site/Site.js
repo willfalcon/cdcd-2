@@ -1,22 +1,42 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import { format } from 'date-fns';
+import { useQuery, gql } from '@apollo/client';
 
 import Modal from '../Modal';
 
 import LatestUpdate from './LatestUpdate';
+import LastPost from './LastPost';
+
+const SITE_DATA_QUERY = gql`
+  query SITE_DATA_QUERY($id: ID!) {
+    siteData(id: $id) {
+      latestPost
+      latestUpdate
+      typeOptions
+      error
+    }
+  }
+`;
 
 const Site = props => {
+  // console.log(props);
   const {
     url,
     frontendUrl = false,
     title,
     setExpanded,
-
-    latestPost,
-    error,
+    id,
+    // latestPost,
+    // error,
   } = props;
   const [largeScreenshot, toggleLargeScreenshot] = useState(false);
+
+  const { data, loading, error } = useQuery(SITE_DATA_QUERY, { variables: { id } });
+
+  const latestPost = data?.siteData?.latestPost;
+  const latestUpdate = data?.siteData?.latestUpdate;
+  const typeOptions = data?.siteData?.typeOptions;
 
   return (
     <>
@@ -51,10 +71,10 @@ const Site = props => {
         </button>
         {/* <MainUpdate {...props} /> */}
 
-        {!error && (
+        {!error && latestPost && (
           <>
-            <time className="last-post">Last Post: {format(new Date(latestPost), 'L/dd/yyy')}</time>
-            <LatestUpdate {...props} />
+            <LatestUpdate {...props} latestUpdate={latestUpdate} typeOptions={typeOptions} />
+            <LastPost latestPost={latestPost} typeOptions={typeOptions} {...props} />
           </>
         )}
 
