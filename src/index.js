@@ -10,7 +10,7 @@ const root = ReactDOMClient.createRoot(container);
 
 const development = process?.env?.NODE_ENV === 'development';
 const httpLink = new HttpLink({
-  uri: development ? 'http://localhost:4000/api/graphql' : 'https://cdcd-server.herokuapp.com/graphql',
+  uri: development ? 'http://localhost:4000/api/graphql' : 'https://cdcd-keystone.herokuapp.com/api/graphql',
   // uri: 'https://cdcd-server.herokuapp.com/graphql',
   credentials: 'include',
 });
