@@ -36,7 +36,7 @@ const Site = props => {
 
   const latestPost = data?.siteData?.latestPost;
   const latestUpdate = data?.siteData?.latestUpdate;
-  const typeOptions = data?.siteData?.typeOptions;
+  const typeOptions = data?.siteData?.typeOptions || [];
 
   return (
     <>
