@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import { format } from 'date-fns';
+// import { format } from 'date-fns';
 import { useQuery, gql } from '@apollo/client';
 
 import Modal from '../Modal';
@@ -20,7 +20,6 @@ const SITE_DATA_QUERY = gql`
 `;
 
 const Site = props => {
-  // console.log(props);
   const {
     url,
     frontendUrl = false,
@@ -32,11 +31,12 @@ const Site = props => {
   } = props;
   const [largeScreenshot, toggleLargeScreenshot] = useState(false);
 
-  const { data, loading, error } = useQuery(SITE_DATA_QUERY, { variables: { id } });
+  const { data, error } = useQuery(SITE_DATA_QUERY, { variables: { id } });
 
   const latestPost = data?.siteData?.latestPost;
   const latestUpdate = data?.siteData?.latestUpdate;
-  const typeOptions = data?.siteData?.typeOptions || [];
+  const typeOptions =
+    data?.siteData?.typeOptions || `To filter results by post type, upgrade this site's CDCD plugin to version 2.0.1 or higher.`;
 
   return (
     <>

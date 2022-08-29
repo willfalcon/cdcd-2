@@ -1,7 +1,7 @@
-import React, { useEffect } from 'react';
-import { useSearchParams, useNavigate } from 'react-router-dom';
+import React from 'react';
+// import { useSearchParams, useNavigate } from 'react-router-dom';
 
-import useSiteContext from './SiteContext';
+// import useSiteContext from './SiteContext';
 
 const Auth = props => {
   return (

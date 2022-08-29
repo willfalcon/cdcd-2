@@ -4,9 +4,10 @@ import { format } from 'date-fns';
 import Button from '../Button';
 import Modal from '../Modal';
 import Form from '../Form';
-import Error from '../Error';
+import Error, { WarningStyles } from '../Error';
 import { gql, useMutation } from '@apollo/client';
 import nProgress from 'nprogress';
+import { FieldsetGrid } from './LatestUpdate';
 
 const LastPost = ({ latestPost, typeOptions, postTypes, id }) => {
   const [editPostOptions, setEditPostOptions] = useState(false);
@@ -41,7 +42,7 @@ const PostOptions = ({ setEditPostOptions, typeOptions, postTypes, id }) => {
         onSubmit={async e => {
           e.preventDefault();
           nProgress.start();
-          const props = await updatePostTypes({
+          await updatePostTypes({
             variables: {
               id,
               data: {
@@ -57,35 +58,43 @@ const PostOptions = ({ setEditPostOptions, typeOptions, postTypes, id }) => {
         <p>Set which post types you'd like to be included in the "Last Post" status.</p>
 
         <Error error={error} />
-        <fieldset disabled={loading} aria-busy={loading}>
-          <div className="columns-2" style={{ marginBottom: '2rem' }}>
-            {typeOptions.map(type => {
-              return (
-                <label style={{ display: 'block' }} key={type}>
-                  <input
-                    type="checkbox"
-                    name="options"
-                    value={type}
-                    checked={checkedTypes.includes(type)}
-                    onChange={e => {
-                      if (!checkedTypes.includes(type)) {
-                        setCheckedTypes([...checkedTypes, type]);
-                      } else {
-                        setCheckedTypes([
-                          ...checkedTypes.slice(0, checkedTypes.indexOf(type)),
-                          ...checkedTypes.slice(checkedTypes.indexOf(type) + 1),
-                        ]);
-                      }
-                    }}
-                    style={{ marginRight: '5px' }}
-                  />
-                  {type}
-                </label>
-              );
-            })}
-          </div>
-          <Button type="submit">Submit</Button>
-        </fieldset>
+        <FieldsetGrid disabled={loading} aria-busy={loading}>
+          {typeof typeOptions === 'object' ? (
+            <div className="columns-2" style={{ marginBottom: '2rem' }}>
+              {typeOptions.map(type => {
+                return (
+                  <label style={{ display: 'block' }} key={type}>
+                    <input
+                      type="checkbox"
+                      name="options"
+                      value={type}
+                      checked={checkedTypes.includes(type)}
+                      onChange={e => {
+                        if (!checkedTypes.includes(type)) {
+                          setCheckedTypes([...checkedTypes, type]);
+                        } else {
+                          setCheckedTypes([
+                            ...checkedTypes.slice(0, checkedTypes.indexOf(type)),
+                            ...checkedTypes.slice(checkedTypes.indexOf(type) + 1),
+                          ]);
+                        }
+                      }}
+                      style={{ marginRight: '5px' }}
+                    />
+                    {type}
+                  </label>
+                );
+              })}
+            </div>
+          ) : (
+            <WarningStyles>
+              <p>{typeOptions}</p>
+            </WarningStyles>
+          )}
+          <Button className="span-2" type="submit">
+            Submit
+          </Button>
+        </FieldsetGrid>
       </Form>
     </Modal>
   );

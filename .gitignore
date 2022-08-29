@@ -25,3 +25,6 @@ yarn-error.log*
 
 .eslintcache
 src/config.js
+
+
+.DS_Store

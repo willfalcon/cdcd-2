@@ -9,7 +9,7 @@ import Button from '../Button';
 import Modal from '../Modal';
 import Form from '../Form';
 import useForm from '../../lib/useForm';
-import Error from '../Error';
+import Error, { WarningStyles } from '../Error';
 
 const UPDATE_FLAG_TIME_MUTATION = gql`
   mutation UPDATE_FLAG_TIME_MUTATION($id: ID!, $data: SiteUpdateInput!) {
@@ -57,33 +57,39 @@ const LatestUpdateOptions = ({ setEditFlagTime, id, flagTime, updatePostTypes, t
           <div className="label-wrapper span-1">
             <h3>Post Types to Check</h3>
             <p>Set which post types you'd like to be included in the "Last Update" status.</p>
-            <div className="columns-2">
-              {typeOptions.map(type => {
-                return (
-                  <label style={{ display: 'block' }} key={type}>
-                    <input
-                      type="checkbox"
-                      name="options"
-                      value={type}
-                      checked={checkedTypes.includes(type)}
-                      onChange={e => {
-                        console.log(e.target.checked);
-                        if (!checkedTypes.includes(type)) {
-                          setCheckedTypes([...checkedTypes, type]);
-                        } else {
-                          setCheckedTypes([
-                            ...checkedTypes.slice(0, checkedTypes.indexOf(type)),
-                            ...checkedTypes.slice(checkedTypes.indexOf(type) + 1),
-                          ]);
-                        }
-                      }}
-                      style={{ marginRight: '5px' }}
-                    />
-                    {type}
-                  </label>
-                );
-              })}
-            </div>
+            {typeof typeOptions === 'object' ? (
+              <div className="columns-2">
+                {typeOptions.map(type => {
+                  return (
+                    <label style={{ display: 'block' }} key={type}>
+                      <input
+                        type="checkbox"
+                        name="options"
+                        value={type}
+                        checked={checkedTypes.includes(type)}
+                        onChange={e => {
+                          console.log(e.target.checked);
+                          if (!checkedTypes.includes(type)) {
+                            setCheckedTypes([...checkedTypes, type]);
+                          } else {
+                            setCheckedTypes([
+                              ...checkedTypes.slice(0, checkedTypes.indexOf(type)),
+                              ...checkedTypes.slice(checkedTypes.indexOf(type) + 1),
+                            ]);
+                          }
+                        }}
+                        style={{ marginRight: '5px' }}
+                      />
+                      {type}
+                    </label>
+                  );
+                })}
+              </div>
+            ) : (
+              <WarningStyles>
+                <p>{typeOptions}</p>
+              </WarningStyles>
+            )}
           </div>
           <Button type="submit" className="span-2">
             Submit
@@ -94,7 +100,7 @@ const LatestUpdateOptions = ({ setEditFlagTime, id, flagTime, updatePostTypes, t
   );
 };
 
-const FieldsetGrid = styled.fieldset`
+export const FieldsetGrid = styled.fieldset`
   display: grid;
   gap: 3rem;
   grid-template-columns: 2fr 3fr;

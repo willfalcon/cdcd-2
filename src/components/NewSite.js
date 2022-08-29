@@ -4,7 +4,7 @@ import Form from './Form';
 import Button from './Button';
 import Error from './Error';
 import useForm from '../lib/useForm';
-import { gql, useMutation, useQuery } from '@apollo/client';
+import { gql, useMutation } from '@apollo/client';
 import { SITES_QUERY } from './SiteList';
 
 const CREATE_SITE_MUTATION = gql`
